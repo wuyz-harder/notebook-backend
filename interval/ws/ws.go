@@ -1,6 +1,8 @@
 package ws
 
 import (
+	"GetHotWord/interval/api/models"
+	"GetHotWord/utils"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -12,10 +14,8 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-var id int = 0
-
 // 映射关系表
-var clientMap map[int]*Node = make(map[int]*Node, 0)
+var clientMap map[string]*Node = make(map[string]*Node, 0)
 
 // 消息类型
 const GET_MSG = "GET_MSG"
@@ -33,7 +33,7 @@ type ContactMes struct {
 	MesType    string `json:"type"`
 	FromUserID int    `json:"userID"`
 	Mes        string `json:"mes"`
-	ToUserID   int    `json:"toUserID"`
+	ToUserID   string `json:"toUserID"`
 }
 
 // 消息类型
@@ -44,45 +44,56 @@ type HeartBeat struct {
 
 // Node 当前用户节点 userId和Node的映射关系
 type Node struct {
-	Name int `json:"name"`
-	//
-	Conn      *websocket.Conn  `json:"-"`
+	ClientID string `json:"name"`
+	// 这个是保留该node的wsid
+	WsClientInfo models.WsClient `json:"wsClientInfo"`
+	//这个是维护链接
+	Conn *websocket.Conn `json:"-"`
+	// 这个是消息队列
 	DataQueue chan interface{} `json:"-"`
 	// 群组的消息分发
 }
 
-func Chat(ctx *gin.Context) {
+var upGrader = websocket.Upgrader{
+	CheckOrigin: func(r *http.Request) bool {
+		// 根据判断token的方法来鉴权,如果没token就返回false
+		return true
+	},
+}
 
-	var upGrader = websocket.Upgrader{
-		CheckOrigin: func(r *http.Request) bool {
-			// 根据判断token的方法来鉴权,如果没token就返回false
-			return true
-		},
-	}
+func Chat(ctx *gin.Context) {
+	// 升级协议以后原来的请求头会消失，所以要在query里用来获取
+	token := ctx.Query("token")
+	_, claims, _ := utils.ParseToken(token)
+
 	// 在响应头上添加Sec-Websocket-Protocol,
 	upGrader.Subprotocols = []string{ctx.GetHeader("Sec-Websocket-Protocol")}
 	//升级get请求为webSocket协议
 	conn, err := upGrader.Upgrade(ctx.Writer, ctx.Request, nil)
 
 	if err != nil {
-		fmt.Print(err)
 		return
 	}
 
 	// 绑定到当前节点
 	rwLocker.Lock()
-	id = id + 1
+	var client models.WsClient
+	client.User = claims.UserID
+	fmt.Println("=========")
+	fmt.Println(claims.UserID)
+	client.GetClientByUser()
 	node := &Node{
-		Name:      id,
-		Conn:      conn,
-		DataQueue: make(chan interface{}, 50),
+		ClientID:     client.WebsocketID,
+		WsClientInfo: client,
+		Conn:         conn,
+		DataQueue:    make(chan interface{}, 50),
 	}
 	// 映射关系的绑定
-	clientMap[id] = node
+	clientMap[client.WebsocketID] = node
 	// 广播更新用户列表
 	broadcast()
 	rwLocker.Unlock()
-	sendMsg(id, map[string]interface{}{"msg": "init success", "user_id": id, "type": LOGIN_SUCCESS, "users": clientMap})
+	sendMsg(client.WebsocketID, map[string]interface{}{"msg": "init success", "user_id": client.WebsocketID, "type": LOGIN_SUCCESS, "users": clientMap})
 	// 发送数据给客户端
 	go sendProc(node)
 	// 接收消息
@@ -121,9 +132,9 @@ func listenFromClient(node *Node) {
 }
 
 // 将数据推送到管道中
-func sendMsg(userId int, message interface{}) {
+func sendMsg(clientID string, message interface{}) {
 	rwLocker.RLock()
-	node, isOk := clientMap[userId]
+	node, isOk := clientMap[clientID]
 	fmt.Println(node)
 	rwLocker.RUnlock()
 	if isOk {
@@ -141,9 +152,6 @@ func sendProc(node *Node) {
 			err := node.Conn.WriteJSON(data)
 			if err != nil {
 				fmt.Println(err)
-				fmt.Println("发送消息失败")
-				fmt.Println(node.Name)
-
 			} else {
 				timer.Stop()
 				timer.Reset(5 * time.Second)
@@ -156,8 +164,8 @@ func sendProc(node *Node) {
 			timer.Stop()
 			// 超时了就把这个链接关闭，然后去掉这个map
 			node.Conn.Close()
-			fmt.Printf("%d已关闭", node.Name)
-			delete(clientMap, node.Name)
+			fmt.Printf("%s已关闭", node.ClientID)
+			delete(clientMap, node.ClientID)
 			// 广而告之，有用户退出了
 			broadcast()
 			goto EXIT

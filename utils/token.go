@@ -32,7 +32,7 @@ func GenerateToken(name string, userID int) (string, error) {
 		},
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	// fmt.Println(token)
+
 	tokenString, err := token.SignedString(jwtkey)
 	if err != nil {
 		fmt.Println(err)
@@ -46,10 +46,5 @@ func ParseToken(tokenString string) (*jwt.Token, *Claims, error) {
 	token, err := jwt.ParseWithClaims(tokenString, Claims, func(token *jwt.Token) (i interface{}, err error) {
 		return jwtkey, nil
 	})
-	fmt.Println("-====")
-	fmt.Println(Claims.UserID)
-	fmt.Println("-====")
-	fmt.Println(Claims.UserName)
-	fmt.Println("-====")
 	return token, Claims, err
 }

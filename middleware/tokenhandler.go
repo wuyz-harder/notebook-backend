@@ -17,8 +17,8 @@ func TokenHanlder() gin.HandlerFunc {
 		path := c.Request.URL.Path
 		method := c.Request.Method
 
-		// 判断是否是登录页，登录页就直接跳过
-		if !strings.Contains(path, "login") {
+		// 判断是否是登录页或者是文件获取，登录页就直接跳过
+		if !strings.Contains(path, "login") && !strings.Contains(path, "file") {
 			// 如果是options或者wss电话就直接跳过
 			if method == "OPTIONS" {
 				c.Next()
@@ -27,7 +27,6 @@ func TokenHanlder() gin.HandlerFunc {
 			// 进行token验证
 			token := c.Request.Header.Get("token")
 			wsToken := c.Request.Header.Get("Sec-WebSocket-Protocol")
-			fmt.Println(token)
 			if token == "" && wsToken == "" {
 				// c.Error(common.NewError(401, 401, "用户未登录"))
 				c.AbortWithError(401, common.NewError(401, 401, "用户未登录"))
@@ -41,8 +40,8 @@ func TokenHanlder() gin.HandlerFunc {
 						c.Error(common.NewError(401, 200401, "用户未登录或已超时"))
 						return
 					}
-
-					fmt.Println(claims)
+					// 存起来给后面的响应器使用
+					c.Set("userID", claims.UserID)
 					c.Next()
 
 				} else {

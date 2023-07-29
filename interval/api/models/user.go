@@ -16,6 +16,8 @@ type User struct {
 	UserName     string `json:"name"`
 	Email        string `json:"email" `
 	Password     string `json:"password,omitempty"`
+	AvatarUrl    string `json:"avatarUrl"`
+	Introduce    string `json:"introduce"`
 	SaltPassword string `json:"-" gorm:"type:varchar(60);comment:密码hash;<-"`
 
 	// 后面这个是设置自动生成时间，默认是当前值
@@ -29,7 +31,7 @@ type APIUser struct {
 	UserName string `json:"name"`
 	Email    string `json:"email" `
 	// 后面这个是设置自动生成时间，默认是当前值
-	CreateTime time.Time `gorm:"column:create_time;type:TIMESTAMP;default:CURRENT_TIMESTAMP;<-:create"`
+	CreateTime *LocalTime `gorm:"column:create_time;type:TIMESTAMP;default:CURRENT_TIMESTAMP;<-:create"`
 }
 
 func (user *User) Create() error {
@@ -80,15 +82,25 @@ func (user *User) GetUserByName(name string) (interface{}, error) {
 }
 
 // 根据id
-func (user *User) GetUserByID() (interface{}, error) {
+func (user *User) GetUserByID() (User, error) {
 	var resUser User
 	// select是只有获取到的字段有值，其余只有默认值
 	err := Db.Where(&User{ID: user.ID}).Preload("Tags").Find(&resUser).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return User{}, nil
+	}
+	return resUser, err
+}
+
+// 根据token解析后设置的header 里的id获取
+func (user *User) GetUserByTokenID(id int) (interface{}, error) {
+	var resUser User
+	// select是只有获取到的字段有值，其余只有默认值
+	err := Db.Where(&User{ID: id}).Select([]string{"user_name", "id", "email", "avatar_url", "introduce"}).Find(&resUser).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, nil
 	}
 	return resUser, err
-
 }
 
 // 删除用户

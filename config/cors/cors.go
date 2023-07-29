@@ -9,7 +9,7 @@ import (
 func GetCors() cors.Config {
 	cor := cors.Config{
 		AllowOrigins: []string{"*"},
-		AllowMethods: []string{"PUT", "PATCH", "POST", "OPTIONS", "GET"},
+		AllowMethods: []string{"PUT", "PATCH", "POST", "OPTIONS", "GET", "DELETE"},
 		AllowHeaders: []string{"*"},
 
 		ExposeHeaders:    []string{"*"},

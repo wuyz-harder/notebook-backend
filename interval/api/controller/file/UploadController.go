@@ -72,7 +72,7 @@ func UploadFile(context *gin.Context) {
 		context.Error(common.NewError(400, 200400, "file参数不能为空"))
 	}
 	uid := uuid.NewString()
-	saveErr := context.SaveUploadedFile(uploadfile, "file"+string(os.PathSeparator)+uid+"-"+uploadfile.Filename)
+	saveErr := context.SaveUploadedFile(uploadfile, "../file"+string(os.PathSeparator)+uid+"-"+uploadfile.Filename)
 	//判断是否保存失败
 	if saveErr != nil {
 		context.JSON(http.StatusServiceUnavailable, gin.H{
@@ -82,7 +82,7 @@ func UploadFile(context *gin.Context) {
 	}
 	ufile, _ := uploadfile.Open()
 	ufile.Close()
-	file, _ := os.OpenFile("file"+string(os.PathSeparator)+uid+"-"+uploadfile.Filename, os.O_RDONLY, 0755)
+	file, _ := os.OpenFile("../file"+string(os.PathSeparator)+uid+"-"+uploadfile.Filename, os.O_RDONLY, 0755)
 	defer file.Close()
 	var res []string
 	//pdf文件用tiga
@@ -121,4 +121,31 @@ func ReadPdf(path string) (string, error) {
 	}
 	//Background就是纯文本
 	return client.Parse(context.Background(), f)
+}
+
+// 上传头像
+
+func UploadAvatar(context *gin.Context) {
+
+	uploadfile, err := context.FormFile("file")
+
+	if err != nil {
+		context.Error(common.NewError(400, 200400, "file参数不能为空"))
+	}
+	uid := uuid.NewString()
+	saveErr := context.SaveUploadedFile(uploadfile, "../file/avatar"+string(os.PathSeparator)+uid+"-"+uploadfile.Filename)
+	//判断是否保存失败
+	if saveErr != nil {
+		context.JSON(http.StatusServiceUnavailable, gin.H{
+			"mes": saveErr.Error(),
+		})
+		return
+	}
+	//tiga
+	context.JSON(
+		http.StatusOK, gin.H{
+			"msg": "上传成功",
+			"url": "file/avatar" + string(os.PathSeparator) + uid + "-" + uploadfile.Filename,
+		})
+
 }

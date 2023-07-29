@@ -1,8 +1,6 @@
 package models
 
 import (
-	"fmt"
-
 	"github.com/jinzhu/gorm"
 )
 
@@ -29,7 +27,6 @@ func (tag *Tag) Insert(name string) error {
 	err := Db.Transaction(func(tx *gorm.DB) error {
 
 		err := tx.Model(&Tag{}).Create(&Tag{Name: name}).Error
-		fmt.Println(err)
 
 		return err
 	})

@@ -86,27 +86,30 @@ func UpdateUser(context *gin.Context) {
 		return
 	}
 	jsonErr := json.Unmarshal(body, &user)
+
 	tagErr := json.Unmarshal(body, &tag)
-
 	var tagsList []models.Tag
-
-	for _, v := range tag.Tag {
-
-		tag := models.Tag{
-			Name: v,
+	// 有标签的情况下才设置
+	if tagErr == nil {
+		for _, v := range tag.Tag {
+			tag := models.Tag{
+				Name: v,
+			}
+			exist, res := dbTag.Exist((&tag))
+			if exist {
+				tagsList = append(tagsList, res)
+			} else {
+				tagsList = append(tagsList, tag)
+			}
 		}
-
-		exist, res := dbTag.Exist((&tag))
-
-		if exist {
-			tagsList = append(tagsList, res)
-		} else {
-			tagsList = append(tagsList, tag)
-		}
+		// 加载完之后呢
+		user.Tags = tagsList
 	}
-	// 加载完之后呢
 
-	user.Tags = tagsList
+	// 根据token获取用户的id
+	userID, _ := context.Get("userID")
+
+	user.ID = userID.(int)
 	if tagErr != nil {
 		// 服务器错误处理
 		context.Error(common.NewError(400, 200400, jsonErr.Error()))
@@ -130,7 +133,7 @@ func UpdateUser(context *gin.Context) {
 
 }
 
-// 根据名字或者用户信息
+// 根据名字获取用户信息
 func GetUserByName(context *gin.Context) {
 	name := context.Query("name")
 	if name == "" {
@@ -152,7 +155,6 @@ func GetUserByName(context *gin.Context) {
 
 // 获取所有用户
 func GetAllUser(context *gin.Context) {
-
 	users, err := MyUser.GetAll()
 	if err != nil {
 		context.Error(common.NewError(400, 200400, err.Error()))
@@ -190,6 +192,17 @@ func DeleteUserById(context *gin.Context) {
 	context.JSON(200, res)
 }
 
+// 根据token获取自己的信息
+func GetUserInfoByTokenId(context *gin.Context) {
+
+	strId, _ := context.Get("userID")
+	userID, _ := strId.(int)
+	res, _ := MyUser.GetUserByTokenID(userID)
+	context.JSON(200, gin.H{"mes": "success", "data": res})
+	return
+
+}
+
 func VertifyPw(context *gin.Context) {
 	var namePd NamePW
 	err := context.ShouldBindJSON(&namePd)
@@ -198,7 +211,7 @@ func VertifyPw(context *gin.Context) {
 	} else {
 		_, vErr, userID := MyUser.VertifyNamePasswd(namePd.Password, namePd.Name)
 		if vErr != nil {
-			context.Error(common.NewError(401, 200400, "用户名或密码错误"))
+			context.Error(common.NewError(400, 200400, "用户名或密码错误"))
 			return
 		} else {
 			token, err := utils.GenerateToken(namePd.Name, userID)
