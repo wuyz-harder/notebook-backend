@@ -12,10 +12,11 @@ import (
 )
 
 type User struct {
-	ID           int    `json:"id" `
-	UserName     string `json:"name"`
-	Email        string `json:"email" `
-	Password     string `json:"password,omitempty"`
+	ID       int    `json:"id" `
+	UserName string `json:"name"`
+	Email    string `json:"email" `
+	// Password     string `json:"password,omitempty"`
+	Password     string `json:"-"`
 	AvatarUrl    string `json:"avatarUrl"`
 	Introduce    string `json:"introduce"`
 	SaltPassword string `json:"-" gorm:"type:varchar(60);comment:密码hash;<-"`
@@ -125,7 +126,7 @@ func (user *User) NameExists() (bool, error) {
 func (user *User) GetAll() ([]User, error) {
 	var resUser []User
 	// 先预加载
-	err := Db.Select([]string{"id", "user_name", "email"}).Find(&resUser).Error
+	err := Db.Find(&resUser).Error
 
 	return resUser, err
 }

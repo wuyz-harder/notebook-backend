@@ -15,7 +15,6 @@ func GinLogger(logger *zap.Logger) gin.HandlerFunc {
 		query := c.Request.URL.RawQuery
 		// 让其他handler先走一步
 		c.Next()
-
 		cost := time.Since(start)
 		logger.Info(path,
 			zap.Int("status", c.Writer.Status()),

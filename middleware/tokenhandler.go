@@ -17,8 +17,8 @@ func TokenHanlder() gin.HandlerFunc {
 		path := c.Request.URL.Path
 		method := c.Request.Method
 
-		// 判断是否是登录页或者是文件获取，登录页就直接跳过
-		if !strings.Contains(path, "login") && !strings.Contains(path, "file") {
+		// 判断是否是登录页或者是文件获取，登录页就直接跳过、或者是注册接口
+		if !strings.Contains(path, "login") && !strings.Contains(path, "file") && !strings.Contains(path, "register") {
 			// 如果是options或者wss电话就直接跳过
 			if method == "OPTIONS" {
 				c.Next()

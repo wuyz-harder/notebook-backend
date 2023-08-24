@@ -5,6 +5,7 @@ import (
 	"GetHotWord/interval/api/controller/comment"
 	"GetHotWord/interval/api/controller/device"
 	"GetHotWord/interval/api/controller/file"
+	"GetHotWord/interval/api/controller/message"
 	"GetHotWord/interval/api/controller/note"
 	"GetHotWord/interval/api/controller/star"
 	"GetHotWord/interval/api/controller/tag"
@@ -50,7 +51,7 @@ func Routes(r *gin.Engine) {
 	// 删除某个用户
 	v1.Handle("DELETE", "/user", user.DeleteUserById)
 	// 创建用户
-	v1.Handle("POST", "/user", user.CreateUser)
+	v1.Handle("POST", "/user/register", user.CreateUser)
 	// 用户登录
 	v1.Handle("POST", "/user/login", user.VertifyPw)
 
@@ -80,5 +81,8 @@ func Routes(r *gin.Engine) {
 	// 收藏
 	v1.Handle("POST", "/star", star.CreateStar)
 	v1.Handle("GET", "/star", star.GetStars)
+
+	// 消息记录
+	v1.Handle("GET", "/message", message.GetMessages)
 
 }

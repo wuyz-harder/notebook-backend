@@ -1,2 +1,6 @@
-mysql
+mysql:
+  database:device
+  user:root
+  pw:Aa123456
+
 

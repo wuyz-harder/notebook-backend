@@ -19,19 +19,18 @@ type WsClient struct {
 	LastActive *LocalTime `gorm:"column:last_active;type:TIMESTAMP;default:CURRENT_TIMESTAMP;<-:create"`
 }
 
-func (client *WsClient) GetClientByUser() (WsClient, error) {
-	var res WsClient
-	err := Db.Where(&WsClient{User: client.User}).Find(&res).Error
+func (client *WsClient) GetClientByUser() error {
+
+	err := Db.Where(&WsClient{User: client.User}).Preload("UserInfo").Find(&client).Error
 	if err != nil {
 		// 如果没有的话就创建
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			res.User = client.User
-			res.Create()
-			return res, nil
+			client.Create()
+			return nil
 		}
-		return res, err
+		return err
 	} else {
-		return res, nil
+		return nil
 	}
 }
 

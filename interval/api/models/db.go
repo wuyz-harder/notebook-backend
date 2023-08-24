@@ -32,10 +32,10 @@ func init() {
 	// 	dbname: "user",                  // 数据库名称
 	// }
 
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%v)/%s?charset=utf8&parseTime=True&loc=Local", "root", "Aa123456", "118.89.199.105", 3366, "device")
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%v)/%s?charset=utf8&parseTime=True&loc=Local", "root", "Aa123456", "118.89.199.105", "3366", "device")
 
 	Db, err = gorm.Open("mysql", dsn)
-	Db.AutoMigrate(&User{}, &Tag{}, &Device{})
+	// Db.AutoMigrate(&User{}, &Tag{}, &Device{})
 	Db.SetLogger(log.New(os.Stdout, "\r\n", 0))
 	if err != nil {
 
