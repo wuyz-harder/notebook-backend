@@ -98,6 +98,7 @@ func UpdateUser(context *gin.Context) {
 			exist, res := dbTag.Exist((&tag))
 			if exist {
 				tagsList = append(tagsList, res)
+
 			} else {
 				tagsList = append(tagsList, tag)
 			}

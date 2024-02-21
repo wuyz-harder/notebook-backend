@@ -15,6 +15,8 @@ import (
 // GinRecovery recover掉项目可能出现的panic
 func GinRecovery(logger *zap.Logger, stack bool) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		// 崩溃了后执行
+		// 在defer里面定义recover才能接收到panic的信息，因为就算panic也能执行defer的函数
 		defer func() {
 			if err := recover(); err != nil {
 				// Check for a broken connection, as it is not really a
@@ -55,6 +57,7 @@ func GinRecovery(logger *zap.Logger, stack bool) gin.HandlerFunc {
 				c.AbortWithStatus(http.StatusInternalServerError)
 			}
 		}()
+		// 先执行这一步
 		c.Next()
 	}
 }

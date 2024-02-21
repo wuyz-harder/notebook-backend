@@ -19,6 +19,8 @@ type WsClient struct {
 	LastActive *LocalTime `gorm:"column:last_active;type:TIMESTAMP;default:CURRENT_TIMESTAMP;<-:create"`
 }
 
+var res map[int]int
+
 func (client *WsClient) GetClientByUser() error {
 
 	err := Db.Where(&WsClient{User: client.User}).Preload("UserInfo").Find(&client).Error

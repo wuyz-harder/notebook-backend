@@ -10,6 +10,7 @@ import (
 var rdb *redis.Client
 
 func init() {
+
 	rdb = redis.NewClient(&redis.Options{
 		Addr:     "localhost:6379", // Redis服务器地址
 		Password: "Aa123456",       // 密码，如果Redis服务器需要密码认证

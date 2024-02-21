@@ -40,6 +40,9 @@ func (u User) getAge() {
 	fmt.Println(u.age)
 }
 
+/*
+
+ */
 // 去除字符串中的html标签
 func TrimHtml(src string) string {
 	//将HTML标签全转换成小写

@@ -15,6 +15,7 @@ func ErrHandler() gin.HandlerFunc {
 			err := e.Err
 			if err != nil {
 				var Err *(common.ApiError)
+				// 判断是不是*(common.ApiError)类型
 				if e, ok := err.(*(common.ApiError)); ok {
 					Err = e
 				} else if e, ok := err.(error); ok {

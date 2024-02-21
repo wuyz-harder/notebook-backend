@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-
 	"sync"
 	"time"
 
@@ -135,6 +134,13 @@ func Chat(ctx *gin.Context) {
 	go listenFromClient(clientMap[claims.UserID])
 }
 
+/*
+*
+
+	监听客户端的socket是否有发送消息过来，并处理发送的消息
+
+*
+*/
 func listenFromClient(node *Node) {
 	for {
 		_, mes, err := node.Conn.ReadMessage()
@@ -185,7 +191,6 @@ func listenFromClient(node *Node) {
 					"from": 0,
 					"msg":  "该用户已下线",
 				}
-
 			} else {
 				node.DataQueue <- map[string]interface{}{
 					"type":    GET_MSG,
@@ -218,15 +223,18 @@ func sendMsg(userID int, message interface{}) {
 	}
 }
 
-// 从管道中获取数据发送出去
-// 心跳保活机制
+// 给该用户的数据都都会发到所属管道里，管道中获取数据发送该用户
+// 心跳保活机制，如果是时钟先到就结束了该函数
 func sendProc(node *Node) {
 	timer := time.NewTicker(5 * time.Second) // 5s后触发
 	// 加锁保护连接关闭操作
 	rwLocker.Lock()
 	conn := node.Conn
 	rwLocker.Unlock()
+	// 无限循环
+EXIT:
 	for {
+		// 看看是时钟先到还是心跳先到
 		select {
 		case data := <-node.DataQueue:
 			err := node.Conn.WriteJSON(data)
@@ -250,10 +258,11 @@ func sendProc(node *Node) {
 				broadcast()
 			}
 			rwLocker.Unlock()
-			goto EXIT
+			// 退出这个循环，因为用户都断线了
+			break EXIT
 		}
 	}
-EXIT:
+
 }
 
 // 广播更新列表
