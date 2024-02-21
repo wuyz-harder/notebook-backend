@@ -1,2 +1,3 @@
 file/avatar/*
 cmd/*.pem
+config/database.yaml

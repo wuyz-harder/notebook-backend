@@ -24,7 +24,6 @@ func main() {
 	r.Use(middleware.GinLogger(zap.L()), middleware.GinRecovery(zap.L(), true))
 	// 登录拦截器
 	r.Use(middleware.TokenHanlder())
-
 	// 静态路径
 	r.Static("/file", "../file")
 
