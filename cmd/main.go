@@ -1,12 +1,13 @@
 package main
 
 import (
-	cors2 "GetHotWord/config/cors"
-	_ "GetHotWord/interval/api/models"
-	"GetHotWord/interval/api/routes"
-	"GetHotWord/logger"
-	"GetHotWord/middleware"
 	"fmt"
+
+	cors2 "github.com/wuyz-harder/notebook-backend/config/cors"
+	_ "github.com/wuyz-harder/notebook-backend/interval/api/models"
+	"github.com/wuyz-harder/notebook-backend/interval/api/routes"
+	"github.com/wuyz-harder/notebook-backend/logger"
+	"github.com/wuyz-harder/notebook-backend/middleware"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"

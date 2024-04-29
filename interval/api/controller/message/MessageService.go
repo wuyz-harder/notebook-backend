@@ -1,9 +1,10 @@
 package message
 
 import (
-	"GetHotWord/common"
-	"GetHotWord/interval/api/models"
 	"strconv"
+
+	"github.com/wuyz-harder/notebook-backend/common"
+	"github.com/wuyz-harder/notebook-backend/interval/api/models"
 
 	"github.com/gin-gonic/gin"
 )

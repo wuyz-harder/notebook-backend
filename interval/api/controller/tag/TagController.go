@@ -1,9 +1,10 @@
 package tag
 
 import (
-	"GetHotWord/common"
-	"GetHotWord/interval/api/models"
 	"encoding/json"
+
+	"github.com/wuyz-harder/notebook-backend/common"
+	"github.com/wuyz-harder/notebook-backend/interval/api/models"
 
 	"github.com/gin-gonic/gin"
 )

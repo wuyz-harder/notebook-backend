@@ -1,11 +1,12 @@
 package models
 
 import (
-	"GetHotWord/common"
-	"GetHotWord/utils"
 	"errors"
 	"fmt"
 	"time"
+
+	"github.com/wuyz-harder/notebook-backend/common"
+	"github.com/wuyz-harder/notebook-backend/utils"
 
 	"github.com/jinzhu/gorm"
 	"go.uber.org/zap"

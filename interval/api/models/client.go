@@ -1,8 +1,9 @@
 package models
 
 import (
-	"GetHotWord/utils"
 	"errors"
+
+	"github.com/wuyz-harder/notebook-backend/utils"
 
 	"github.com/jinzhu/gorm"
 )

@@ -1,10 +1,11 @@
 package star
 
 import (
-	"GetHotWord/common"
-	"GetHotWord/interval/api/models"
 	"encoding/json"
 	"fmt"
+
+	"github.com/wuyz-harder/notebook-backend/common"
+	"github.com/wuyz-harder/notebook-backend/interval/api/models"
 
 	"github.com/gin-gonic/gin"
 )
@@ -44,7 +45,6 @@ func GetStars(context *gin.Context) {
 
 	var star models.Star
 	userID, _ := context.Get("userID")
-
 	star.User = userID.(int)
 	res, cErr := star.GetALL()
 	if cErr != nil {

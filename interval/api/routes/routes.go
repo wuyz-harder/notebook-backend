@@ -2,15 +2,17 @@ package routes
 
 import (
 	// cors2 "GetHotWord/config/cors"
-	"GetHotWord/interval/api/controller/comment"
-	"GetHotWord/interval/api/controller/device"
-	"GetHotWord/interval/api/controller/file"
-	"GetHotWord/interval/api/controller/message"
-	"GetHotWord/interval/api/controller/note"
-	"GetHotWord/interval/api/controller/star"
-	"GetHotWord/interval/api/controller/tag"
-	"GetHotWord/interval/api/controller/user"
-	"GetHotWord/interval/ws"
+	"github.com/wuyz-harder/notebook-backend/interval/api/controller/comment"
+	"github.com/wuyz-harder/notebook-backend/interval/api/controller/device"
+	"github.com/wuyz-harder/notebook-backend/interval/api/controller/file"
+	"github.com/wuyz-harder/notebook-backend/interval/api/controller/message"
+	"github.com/wuyz-harder/notebook-backend/interval/api/controller/note"
+	"github.com/wuyz-harder/notebook-backend/interval/api/controller/star"
+	"github.com/wuyz-harder/notebook-backend/interval/api/controller/tag"
+	"github.com/wuyz-harder/notebook-backend/interval/api/controller/user"
+	"github.com/wuyz-harder/notebook-backend/interval/ws"
+
+	"strings"
 
 	// "github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -21,6 +23,7 @@ func Routes(r *gin.Engine) {
 	// 跨域
 	// r.Use(cors.New(cors2.GetCors()))
 
+	strings.Contains("222", "22")
 	v1 := r.Group("/v1/api")
 	// 设备
 	v1.Handle("GET", "/device-user", device.GetDeviceByUserId)

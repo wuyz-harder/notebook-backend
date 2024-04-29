@@ -1,14 +1,15 @@
 package ws
 
 import (
-	"GetHotWord/common"
-	"GetHotWord/interval/api/models"
-	"GetHotWord/utils"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"sync"
 	"time"
+
+	"github.com/wuyz-harder/notebook-backend/common"
+	"github.com/wuyz-harder/notebook-backend/interval/api/models"
+	"github.com/wuyz-harder/notebook-backend/utils"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"

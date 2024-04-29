@@ -1,11 +1,12 @@
 package note
 
 import (
-	"GetHotWord/common"
-	"GetHotWord/interval/api/models"
-	"GetHotWord/utils"
 	"encoding/json"
 	"strconv"
+
+	"github.com/wuyz-harder/notebook-backend/common"
+	"github.com/wuyz-harder/notebook-backend/interval/api/models"
+	"github.com/wuyz-harder/notebook-backend/utils"
 
 	"github.com/gin-gonic/gin"
 )

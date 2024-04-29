@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"GetHotWord/common"
+	"github.com/wuyz-harder/notebook-backend/common"
 
 	"github.com/gin-gonic/gin"
 )

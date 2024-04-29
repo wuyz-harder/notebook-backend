@@ -1,7 +1,6 @@
 package file
 
 import (
-	"GetHotWord/common"
 	"context"
 	"fmt"
 	"io"
@@ -9,6 +8,8 @@ import (
 	"os"
 	"regexp"
 	"strings"
+
+	"github.com/wuyz-harder/notebook-backend/common"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/go-tika/tika"

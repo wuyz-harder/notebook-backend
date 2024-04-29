@@ -1,8 +1,8 @@
 package middleware
 
 import (
-	"GetHotWord/common"
-	"GetHotWord/utils"
+	"github.com/wuyz-harder/notebook-backend/common"
+	"github.com/wuyz-harder/notebook-backend/utils"
 
 	"fmt"
 	"strings"

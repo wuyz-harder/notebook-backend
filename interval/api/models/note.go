@@ -2,7 +2,6 @@ package models
 
 import (
 	"fmt"
-
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -23,7 +22,7 @@ type Note struct {
 	Size     string `json:"size"`
 	ShareUrl string `json:"shareUrl"`
 	// 分享的文章是否可以编辑
-	ShareEnableEdit string `json:"shareEnableEdit"`
+	ShareEnableEdit int `json:"shareEnableEdit"`
 	// 文章内容必须是长文本
 	Content string `json:"content" gorm:"type:LONGTEXT"`
 	// 后面这个是设置自动生成时间，默认是当前值
@@ -49,7 +48,6 @@ func (note *Note) Create() (int, error) {
 		}
 
 	})
-
 	return id, err
 }
 
